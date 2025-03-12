@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MelodyStream{% endblock %}</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/music-platform.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="{% url 'home' %}">MelodyStream</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'playlists:playlist_list' %}">Playlists</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'playlists:playlist_create' %}">Create Playlist</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                            <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content will be overridden by child templates -->
+        {% endblock %}
+    </main>
+
+    <footer class="text-center mt-4">
+        <p>&copy; 2025 MelodyStream</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

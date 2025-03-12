@@ -1,0 +1,26 @@
+<!-- albums/album_list.html -->
+{% extends "base.html" %}
+
+{% block title %}Albums - MelodyStream{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Albums</h1>
+    <div class="row">
+        {% for album in albums %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                {% if album.cover_image %}
+                <img src="{{ album.cover_image.url }}" alt="{{ album.name }}" class="card-img-top">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ album.name }}</h5>
+                    <p class="card-text">{{ album.artist.name }}</p>
+                    <a href="{% url 'album_detail' album.id %}" class="btn btn-primary">View Album</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

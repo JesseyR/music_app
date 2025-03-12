@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>New Releases</h2>
+    <div class="row">
+        {% for album in new_albums %}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ album.cover_image.url }}" class="card-img-top" alt="{{ album.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ album.title }}</h5>
+                    <p class="card-text">{{ album.artist }}</p>
+                    <p class="text-muted">Released on: {{ album.release_date }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No new releases found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

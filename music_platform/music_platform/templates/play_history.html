@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ title }}</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if play_history %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Song</th>
+                        <th>Artist</th>
+                        <th>Played At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in play_history %}
+                        <tr>
+                            <td>{{ history.song.title }}</td>
+                            <td>{{ history.song.artist.name }}</td>
+                            <td>{{ history.played_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if play_history.has_other_pages %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if play_history.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ play_history.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in play_history.paginator.page_range %}
+                        {% if play_history.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if play_history.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ play_history.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            No play history found. Start listening to some songs!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

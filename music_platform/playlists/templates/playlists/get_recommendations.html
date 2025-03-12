@@ -1,0 +1,10 @@
+{% if recommendations %}
+    {% for song in recommendations %}
+        <div class="song-card">
+            <h3>{{ song.title }}</h3>
+            <p>{{ song.artist.name }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No recommendations available yet. Try playing some songs first!</p>
+{% endif %}

@@ -1,0 +1,118 @@
+<!-- songs/song_list.html -->
+{% extends "base.html" %}
+
+{% block title %}Songs - MelodyStream{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4 text-primary">Songs Library</h1>
+            <p class="lead text-muted">Explore our collection of amazing tracks</p>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group mt-2">
+                <input type="text" class="form-control" placeholder="Search songs..." id="songSearch">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if songs %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for song in songs %}
+            <div class="col mb-4">
+                <div class="card h-100 song-card shadow-sm">
+                    {% if song.album.cover_image %}
+                        <img src="{{ song.album.cover_image.url }}" class="card-img-top album-cover" alt="{{ song.album.name }} cover">
+                    {% else %}
+                        <div class="card-img-top album-cover-placeholder d-flex align-items-center justify-content-center bg-light">
+                            <i class="fas fa-music fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'song_detail' song.id %}" class="text-decoration-none">
+                                {{ song.title }}
+                            </a>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ song.album.name }}</h6>
+                        <p class="card-text">
+                            <span class="badge bg-light text-dark"><i class="far fa-clock me-1"></i>{{ song.duration }}</span>
+                            {% if song.artist %}
+                                <span class="badge bg-info text-dark"><i class="fas fa-user me-1"></i>{{ song.artist }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-play me-1"></i> Play
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-plus me-1"></i> Add to Playlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No songs found. Check back later for updates!
+        </div>
+    {% endif %}
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Add this CSS to your stylesheet -->
+<style>
+    .album-cover {
+        height: 180px;
+        object-fit: cover;
+    }
+    
+    .album-cover-placeholder {
+        height: 180px;
+    }
+</style>
+
+<!-- Add this JavaScript at the end of your content block or in a separate script file -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('songSearch');
+        const songCards = document.querySelectorAll('.song-card');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            songCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const album = card.querySelector('.card-subtitle').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || album.includes(searchTerm)) {
+                    card.closest('.col').style.display = '';
+                } else {
+                    card.closest('.col').style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  /* Add custom gradient background for the hero section */
+  .hero-section {
+    background: linear-gradient(to bottom, rgba(29, 185, 84, 0.8), rgba(18, 18, 18, 1));
+    padding: 60px 0 100px;
+    margin-bottom: 30px;
+  }
+  
+  .hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .hero-title {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: white;
+  }
+  
+  .hero-subtitle {
+    font-size: 18px;
+    margin-bottom: 25px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .section-header h1 {
+    margin-bottom: 0;
+  }
+  
+  .section-link {
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-decoration: none;
+  }
+  
+  .section-link:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+  
+  /* Animation for cards */
+  .album-card {
+    transition: all 0.3s ease;
+  }
+  
+  .album-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  <!-- Hero section for new users -->
+  {% if not user.play_history.exists %}
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to MelodyStream</h1>
+      <p class="hero-subtitle">Discover music that fits your mood, create custom playlists, and enjoy millions of songs.</p>
+      <a href="{% url 'search' %}" class="btn btn-light btn-lg rounded-pill px-4 py-2">Start Discovering</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'home' %}">
+              <i class="fas fa-home"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'search' %}">
+              <i class="fas fa-search"></i> Search
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'playlists:playlist_list' %}">
+              <i class="fas fa-music"></i> Your Library
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'playlists:playlist_create' %}">
+              <i class="fas fa-plus-square"></i> Create Playlist
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'liked_items' %}">
+              <i class="fas fa-heart"></i> Liked Songs
+            </a>
+          </li>
+        </ul>
+        
+        <h6 class="sidebar-heading">Your Playlists</h6>
+        <ul class="nav flex-column">
+          {% for playlist in user.playlists.all %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'playlists:playlist_detail' playlist.id %}">
+              <i class="fas fa-list"></i> {{ playlist.name }}
+            </a>
+          </li>
+          {% empty %}
+          <li class="nav-item">
+            <span class="nav-link text-muted">
+              <small>No playlists yet</small>
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Main content area -->
+    <main class="col-md-9 col-lg-10 ml-sm-auto">
+      <div class="content-section">
+        <!-- Recently Played Section -->
+        <div class="section-header">
+          <h1>Recently Played</h1>
+          <a href="{% url 'play_history' %}" class="section-link">See all</a>
+        </div>
+        
+        <div class="row album-grid">
+          {% for history in user.play_history.all|slice:":6" %}
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+            <div class="album-card">
+              <img src="{{ history.song.cover_image.url|default:'/static/images/default-cover.png' }}" class="card-img-top" alt="{{ history.song.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ history.song.title }}</h5>
+                <p class="card-text">{{ history.song.artist.username }}</p>
+                <a href="{% url 'play_song' history.song.id %}" class="btn btn-success btn-sm">
+                  <i class="fas fa-play"></i> Play
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-secondary">
+              <p class="mb-0">You haven't played any songs yet. Start exploring!</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Made For You Section -->
+        <div class="section-header mt-5">
+          <h1>Made For You</h1>
+          <a href="{% url 'get_recommendations' %}" class="section-link">See all</a>
+        </div>
+        
+        <div class="row album-grid">
+          {% for song in recommendations %}
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+            <div class="album-card">
+              <img src="{{ song.cover_image.url|default:'/static/images/default-cover.png' }}" class="card-img-top" alt="{{ song.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ song.title }}</h5>
+                <p class="card-text">{{ song.artist.username }}</p>
+                <a href="{% url 'play_song' song.id %}" class="btn btn-success btn-sm">
+                  <i class="fas fa-play"></i> Play
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-secondary">
+              <p class="mb-0">Listen to more music to get personalized recommendations.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- New Releases Section -->
+        <div class="section-header mt-5">
+          <h1>New Releases</h1>
+          <a href="{% url 'new_releases' %}" class="section-link">See all</a>
+        </div>
+        
+        <div class="row album-grid">
+          {% for album in new_albums %}
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+            <div class="album-card">
+              <img src="{{ album.cover_image.url|default:'/static/images/default-cover.png' }}" class="card-img-top" alt="{{ album.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ album.title }}</h5>
+                <p class="card-text">{{ album.artist }}</p>
+                <a href="{% url 'album_detail' album.id %}" class="btn btn-outline-secondary btn-sm">
+                  View
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-secondary">
+              <p class="mb-0">No new releases available. Check back soon!</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Genres Section (Added) -->
+        <div class="section-header mt-5">
+          <h1>Browse Genres</h1>
+          <a href="{% url 'genres' %}" class="section-link">See all</a>
+        </div>
+        
+        <div class="row album-grid">
+          {% for genre in genres|slice:":6" %}
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+            <div class="album-card" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% if genre.image_url %}{{ genre.image_url }}{% else %}/static/images/genre-default.jpg{% endif %}');">
+              <div class="card-body text-center py-5">
+                <h5 class="card-title text-white">{{ genre.name }}</h5>
+                <a href="{% url 'genre_detail' genre.slug %}" class="btn btn-outline-light btn-sm mt-3">
+                  Explore
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-secondary">
+              <p class="mb-0">No genres available at the moment.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Featured Artists Section -->
+        <div class="section-header mt-5">
+          <h1>Featured Artists</h1>
+          <a href="{% url 'artists' %}" class="section-link">See all</a>
+      </div>
+      
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+          {% for artist in featured_artists %}
+          <div class="col">
+              <div class="card h-100">
+                  {% if artist.image %}
+                  <img src="{{ artist.image.url }}" class="card-img-top" alt="{{ artist.name }}">
+                  {% else %}
+                  <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
+                      <span class="fs-1">{{ artist.name|slice:":1" }}</span>
+                  </div>
+                  {% endif %}
+                  <div class="card-body">
+                      <h5 class="card-title">{{ artist.name }}</h5>
+                      <a href="{% url 'artist_detail' artist.id %}" class="btn btn-primary">View Profile</a>
+                  </div>
+              </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+              <div class="alert alert-secondary">
+                  <p class="mb-0">No featured artists available at the moment.</p>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+        
+        <!-- Popular Playlists Section -->
+        <div class="section-header mt-5">
+          <h1>Popular Playlists</h1>
+          <a href="{% url 'playlists:popular_playlists' %}" class="section-link">See all</a>
+        </div>
+        
+        <div class="row album-grid mb-5">
+          {% for playlist in popular_playlists %}
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+            <div class="album-card">
+              <img src="{{ playlist.cover_image.url|default:'/static/images/default-playlist.png' }}" class="card-img-top" alt="{{ playlist.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ playlist.name }}</h5>
+                <p class="card-text">{{ playlist.song_count }} songs</p>
+                <p class="card-text"><small class="text-muted">By {{ playlist.creator.username }}</small></p>
+                <a href="{% url 'playlists:playlist_detail' playlist.id %}" class="btn btn-outline-secondary btn-sm">
+                  View
+                </a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="alert alert-secondary">
+              <p class="mb-0">No popular playlists available currently.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Player controls would typically be in a fixed footer included in the base template -->
+{% endblock %}

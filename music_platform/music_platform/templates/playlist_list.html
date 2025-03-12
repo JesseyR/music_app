@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{ title }}</h1>
+    
+    <div class="row">
+        {% for playlist in playlists %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                {% if playlist.cover_image %}
+                <img src="{{ playlist.cover_image.url }}" class="card-img-top" alt="{{ playlist.name }}">
+                {% else %}
+                <div class="placeholder-image">
+                    <i class="fas fa-music"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ playlist.name }}</h5>
+                    <p class="card-text">{{ playlist.songs.count }} songs</p>
+                    <a href="{% url 'playlist_detail' playlist.id %}" class="btn btn-primary">View Playlist</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-secondary">
+                <p class="mb-0">No playlists available.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+<a href="{% url 'playlists:playlist_create' %}" class="btn btn-primary mt-3">Create New Playlist</a>

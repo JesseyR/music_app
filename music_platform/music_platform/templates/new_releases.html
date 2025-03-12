@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <header class="mb-4">
+        <h2 class="display-4">New Releases</h2>
+        <p class="lead text-muted">Discover the latest music added to our collection</p>
+    </header>
+
+    <!-- Filtering options -->
+    <div class="card mb-4 bg-light">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label for="genre-filter" class="form-label">Filter by genre:</label>
+                    <select id="genre-filter" class="form-select">
+                        <option value="">All Genres</option>
+                        {% for genre in genres %}
+                        <option value="{{ genre.id }}">{{ genre.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="sort-order" class="form-label">Sort by:</label>
+                    <select id="sort-order" class="form-select">
+                        <option value="release_date">Release Date (Newest)</option>
+                        <option value="title">Album Title</option>
+                        <option value="artist">Artist Name</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="search-albums" class="form-label">Search:</label>
+                    <input type="search" id="search-albums" class="form-control" placeholder="Search by title or artist...">
+                </div>
+                <div class="col-md-2 mt-md-4">
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Albums grid -->
+    <div class="row g-4">
+        {% for album in new_albums %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card h-100 album-card shadow-sm hover-effect">
+                <div class="position-relative">
+                    <img src="{{ album.cover_image.url }}" class="card-img-top" alt="{{ album.title }}" loading="lazy">
+                    {% if album.release_date|date:"Y-m-d" >= today|date:"Y-m-d" %}
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">NEW</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{ album.title }}</h5>
+                    <p class="card-text mb-0"><a href="{% url 'artist_detail' album.artist.slug %}" class="text-decoration-none">{{ album.artist }}</a></p>
+                    <p class="text-muted small mb-2">Released: {{ album.release_date|date:"F j, Y" }}</p>
+                    
+                    {% if album.genres.all %}
+                    <div class="mb-2">
+                        {% for genre in album.genres.all %}
+                        <span class="badge bg-secondary me-1">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-sm btn-outline-primary preview-button" data-album-id="{{ album.id }}">
+                            <i class="bi bi-play-circle"></i> Preview
+                        </button>
+                        <a href="{% url 'album_detail' album.slug %}" class="btn btn-sm btn-outline-secondary">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle fs-4 me-2"></i> No new releases found at the moment.
+                <p class="mt-2 mb-0">Check back soon or <a href="{% url 'search' %}">browse our catalog</a>.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if new_albums.has_other_pages %}
+    <nav aria-label="Page navigation" class="my-4">
+        <ul class="pagination justify-content-center">
+            {% if new_albums.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ new_albums.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+            
+            {% for i in new_albums.paginator.page_range %}
+                {% if new_albums.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if new_albums.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ new_albums.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Album Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Album Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="preview-content" class="text-center">
+                    <!-- Preview content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle preview button clicks
+        document.querySelectorAll('.preview-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const albumId = this.getAttribute('data-album-id');
+                // In a real implementation, you would fetch preview tracks via AJAX
+                showPreview(albumId);
+            });
+        });
+
+        function showPreview(albumId) {
+            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+            // In a real implementation, you would populate this with AJAX content
+            document.getElementById('preview-content').innerHTML = 
+                '<p class="mb-3">Loading preview tracks for album #' + albumId + '...</p>' +
+                '<div class="spinner-border text-primary" role="status">' +
+                '<span class="visually-hidden">Loading...</span></div>';
+            modal.show();
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

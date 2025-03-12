@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Popular Playlists</h1>
+
+    {% if playlists %}
+        <div class="row">
+            {% for playlist in playlists %}
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card">
+                        <img src="{{ playlist.cover_image.url|default:'/static/images/default-playlist.png' }}" 
+                             class="card-img-top" 
+                             alt="{{ playlist.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ playlist.name }}</h5>
+                            <p class="card-text">{{ playlist.song_count }} songs</p>
+                            <a href="{% url 'playlists:playlist_detail' playlist.id %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No popular playlists available at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

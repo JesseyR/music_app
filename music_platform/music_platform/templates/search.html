@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Search Results</h1>
+
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'search' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search artists, albums, playlists, or songs..." name="q" value="{{ query }}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Display Results -->
+    {% if query %}
+        <p class="lead">Showing results for <strong>"{{ query }}"</strong>:</p>
+
+        <!-- Artists Section -->
+        {% if results.artists %}
+            <h2 class="mt-4">Artists</h2>
+            <div class="list-group">
+                {% for artist in results.artists %}
+                    <a href="{% url 'artist_detail' artist.pk %}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ artist.name }}</h5>
+                        <small class="text-muted">Artist</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Albums Section -->
+        {% if results.albums %}
+            <h2 class="mt-4">Albums</h2>
+            <div class="list-group">
+                {% for album in results.albums %}
+                    <a href="{% url 'album_detail' album.pk %}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ album.title }}</h5>
+                        <small class="text-muted">Album by {{ album.artist.name }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Playlists Section -->
+        {% if results.playlists %}
+            <h2 class="mt-4">Playlists</h2>
+            <div class="list-group">
+                {% for playlist in results.playlists %}
+                    <a href="{% url 'playlists:playlist_detail' playlist.pk %}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ playlist.name }}</h5>
+                        <p class="mb-1 text-muted">{{ playlist.description|truncatechars:100 }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Songs Section -->
+        {% if results.songs %}
+            <h2 class="mt-4">Songs</h2>
+            <div class="list-group">
+                {% for song in results.songs %}
+                    <a href="{% url 'song_detail' song.pk %}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ song.title }}</h5>
+                        <small class="text-muted">Song by {{ song.artist.name }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- No Results Message -->
+        {% if not results.artists and not results.albums and not results.playlists and not results.songs %}
+            <div class="alert alert-info mt-4" role="alert">
+                No results found for <strong>"{{ query }}"</strong>.
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!-- genre_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ genre.name }}</title>
+</head>
+<body>
+    <h1>{{ genre.name }}</h1>
+    
+    <h2>Albums</h2>
+    <ul>
+        {% for album in albums %}
+            <li>{{ album.title }} by {{ album.artist }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Songs</h2>
+    <ul>
+        {% for song in songs %}
+            <li>{{ song.title }} (from {{ song.album.title }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

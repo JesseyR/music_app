@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose a Genre{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Choose a Genre</h1>
+    
+    <!-- Search Bar -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <input type="text" id="genreSearch" class="form-control" placeholder="Search genres..." onkeyup="filterGenres()">
+        </div>
+    </div>
+
+    <!-- Genre List -->
+    <ul class="list-group">
+        {% for genre in genre %}
+            <li class="list-group-item">
+                <a href="{% url 'genre_detail' genre.slug %}" class="text-decoration-none text-dark">
+                    {{ genre.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    // Function to filter genres based on search input
+    function filterGenre() {
+        const input = document.getElementById('genreSearch').value.toUpperCase();
+        const genreItems = document.querySelectorAll('.list-group-item');
+
+        genreItems.forEach(item => {
+            const genreName = item.textContent.toUpperCase();
+            if (genreName.includes(input)) {
+                item.style.display = "";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+</script>
+{% endblock %}

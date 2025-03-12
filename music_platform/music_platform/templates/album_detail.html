@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ album.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Album Header -->
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ album.cover_image.url }}" alt="{{ album.name }}" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-md-8">
+            <h1 class="display-4">{{ album.name }}</h1>
+            <p class="lead">By {{ album.artist.name }}</p>
+            <p>{{ album.release_date|date:"F j, Y" }}</p>
+            <p>{{ album.description }}</p>
+            <button class="btn btn-primary btn-lg">Play Album</button>
+            <button class="btn btn-outline-secondary btn-lg">Add to Favorites</button>
+        </div>
+    </div>
+
+    <!-- Songs List -->
+    <h2 class="mt-5 mb-4">Songs</h2>
+    <div class="list-group">
+        {% for song in album.songs.all %}
+            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="{{ song.cover_image.url }}" alt="{{ song.title }}" class="img-thumbnail mr-3" style="width: 64px; height: 64px;">
+                    <div>
+                        <h5 class="mb-1">{{ song.title }}</h5>
+                        <small class="text-muted">{{ song.artist.name }}</small>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary mr-2">Play</button>
+                    <button class="btn btn-sm btn-outline-secondary">Add to Playlist</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Back to Albums -->
+    <div class="mt-4">
+        <a href="{% url 'album_list' %}" class="btn btn-secondary">Back to Albums</a>
+    </div>
+</div>
+{% endblock %}

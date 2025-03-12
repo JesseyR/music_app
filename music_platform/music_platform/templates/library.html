@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        padding: 50px 0;
+        text-align: center;
+    }
+    .hero-title {
+        font-size: 42px;
+        font-weight: bold;
+    }
+    .hero-subtitle {
+        font-size: 18px;
+        opacity: 0.8;
+    }
+
+    /* Cards */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .card img {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        height: 180px;
+        object-fit: cover;
+    }
+    .card-body h5 {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    /* Section Headers */
+    h3 {
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* List Groups */
+    .list-group-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .list-group-item i {
+        color: #6a11cb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1 class="hero-title">Your Library</h1>
+    <p class="hero-subtitle">Explore your favorite playlists, songs, albums, and artists.</p>
+</div>
+
+<div class="container mt-5">
+    <!-- User's Playlists -->
+    <section class="mt-4">
+        <h3><i class="fas fa-list-music"></i> Your Playlists</h3>
+        <div class="row">
+            {% for playlist in playlists %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="{{ playlist.cover_image.url }}" class="card-img-top" alt="{{ playlist.name }}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ playlist.name }}</h5>
+                        <a href="{% url 'playlists:playlist_detail' playlist.id %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No playlists yet. <a href="{% url 'playlists:playlist_create' %}">Create one</a>.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Liked Songs -->
+    <section class="mt-4">
+        <h3><i class="fas fa-heart"></i> Liked Songs</h3>
+        <ul class="list-group">
+            {% for song in liked_songs %}
+            <li class="list-group-item">
+                <span><i class="fas fa-music"></i> {{ song.title }} - {{ song.artist }}</span>
+                <a href="{% url 'play_song' song.id %}" class="btn btn-success btn-sm">Play</a>
+            </li>
+            {% empty %}
+            <p>No liked songs yet.</p>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Frequently Played Songs -->
+    <section class="mt-4">
+        <h3><i class="fas fa-play-circle"></i> Frequently Played Songs</h3>
+        <ul class="list-group">
+            {% for item in frequently_played_songs %}
+            <li class="list-group-item">
+                <span><i class="fas fa-music"></i> {{ item.song.title }} - {{ item.song.artist }}</span>
+                <a href="{% url 'play_song' item.song %}" class="btn btn-success btn-sm">Play</a>
+            </li>
+            {% empty %}
+            <p>No frequently played songs yet.</p>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Frequently Played Albums -->
+    <section class="mt-4">
+        <h3><i class="fas fa-compact-disc"></i> Frequently Played Albums</h3>
+        <ul class="list-group">
+            {% for item in frequently_played_albums %}
+            <li class="list-group-item">
+                <a href="{% url 'album_detail' item.song__album %}"><i class="fas fa-compact-disc"></i> {{ item.song__album }}</a>
+                <span class="badge badge-info">{{ item.play_count }} plays</span>
+            </li>
+            {% empty %}
+            <p>No frequently played albums yet.</p>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Frequently Played Artists -->
+    <section class="mt-4">
+        <h3><i class="fas fa-user-music"></i> Frequently Played Artists</h3>
+        <ul class="list-group">
+            {% for item in frequently_played_artists %}
+            <li class="list-group-item">
+                <a href="{% url 'artist_detail' item.song__artist %}"><i class="fas fa-user"></i> {{ item.song__artist }}</a>
+                <span class="badge badge-info">{{ item.play_count }} plays</span>
+            </li>
+            {% empty %}
+            <p>No frequently played artists yet.</p>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

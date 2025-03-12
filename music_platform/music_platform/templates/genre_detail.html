@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ genre.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Back Button -->
+    <a href="{% url 'genre_list' %}" class="btn btn-secondary mb-4">Back to Genres</a>
+
+    <!-- Genre Name -->
+    <h1 class="text-center mb-4">{{ genre.name }}</h1>
+
+    <!-- Albums Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="mb-0">Albums</h2>
+        </div>
+        <div class="card-body">
+            {% if albums %}
+                <div class="row">
+                    {% for album in albums %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <!-- Album Cover -->
+                                <img src="{{ album.cover_image.url }}" class="card-img-top" alt="{{ album.title }} Cover" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <!-- Album Title and Artist -->
+                                    <h5 class="card-title">{{ album.title }}</h5>
+                                    <p class="card-text">by {{ album.artist }}</p>
+                                    <!-- Link to Album Detail Page -->
+                                    <a href="{% url 'album_detail' album.id %}" class="btn btn-primary">View Album</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No albums available for this genre.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Songs Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="mb-0">Songs</h2>
+        </div>
+        <div class="card-body">
+            {% if songs %}
+                <ul class="list-group">
+                    {% for song in songs %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <!-- Song Title and Details -->
+                            <div>
+                                <strong>{{ song.title }}</strong> (from <em>{{ song.album.title }}</em>)
+                                <br>
+                                <small class="text-muted">Duration: {{ song.duration }} | Artist: {{ song.artist }}</small>
+                            </div>
+                            <!-- Play Button -->
+                            <button class="btn btn-success btn-sm" onclick="playSong('{{ song.audio_file.url }}')">
+                                Play
+                            </button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No songs available for this genre.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Audio Player -->
+    <div class="fixed-bottom bg-light p-3 text-center">
+        <audio id="audioPlayer" controls class="w-100">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+</div>
+
+<script>
+    // Function to play a song
+    function playSong(audioUrl) {
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
+    }
+</script>
+{% endblock %}

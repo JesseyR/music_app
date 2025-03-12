@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Play History</h1>
+<ul>
+    {% for history in play_history %}
+        <li>{{ history.song.title }} - {{ history.song.artist.username }} (Played at: {{ history.played_at }})</li>
+    {% endfor %}
+</ul>
+{% endblock %}

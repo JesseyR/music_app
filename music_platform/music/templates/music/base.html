@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MelodyStream{% endblock %}</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/music-platform.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="{% url 'home' %}">MelodyStream</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'playlists:playlist_list' %}">Playlists</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'playlists:playlist_create' %}">Create Playlist</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                            <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content will be overridden by child templates -->
+        {% endblock %}
+    </main>
+
+    <!-- Persistent Audio Player -->
+    <footer class="sticky-bottom bg-dark text-white p-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Song Info -->
+            <div class="d-flex align-items-center">
+                <img id="current-song-cover" src="" alt="Cover" class="mr-2" width="50">
+                <div>
+                    <strong id="current-song-title">No song playing</strong><br>
+                    <small id="current-song-artist"></small>
+                </div>
+            </div>
+
+            <!-- Player Controls -->
+            <div class="d-flex align-items-center">
+                <button id="prev-button" class="btn btn-light mx-1"><i class="fas fa-step-backward"></i></button>
+                <button id="play-button" class="btn btn-success mx-1"><i class="fas fa-play"></i></button>
+                <button id="pause-button" class="btn btn-warning mx-1" style="display: none;"><i class="fas fa-pause"></i></button>
+                <button id="next-button" class="btn btn-light mx-1"><i class="fas fa-step-forward"></i></button>
+            </div>
+
+            <!-- Progress Bar and Time -->
+            <div class="d-flex align-items-center">
+                <input type="range" id="progress-bar" min="0" max="100" value="0" class="form-control-range mx-2">
+                <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+            </div>
+
+            <!-- Volume Control -->
+            <input type="range" id="volume-control" min="0" max="100" value="70" class="ml-2">
+        </div>
+
+        <!-- Audio Element -->
+        <audio id="audio-player">
+            <source id="audio-source" src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/audio-player.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Artists - Music Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>All Artists</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for artist in artist %}
+        <div class="col">
+            <div class="card h-100">
+                {% if artist.image %}
+                <img src="{{ artist.image.url }}" class="card-img-top" alt="{{ artist.name }}">
+                {% else %}
+                <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <span class="fs-1">{{ artist.name|slice:":1" }}</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ artist.name }}</h5>
+                    {% if artist.bio %}
+                    <p class="card-text text-truncate">{{ artist.bio }}</p>
+                    {% endif %}
+                    <a href="{% url 'artist_detail' artist.id %}" class="btn btn-primary">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-secondary">
+                <p class="mb-0">No artists available at the moment.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<h2>Your Liked Items</h2>
+<h3>Songs</h3>
+{% for song in liked_songs %}
+    <div>{{ song.title }}</div>
+{% endfor %}
+<h3>Albums</h3>
+{% for album in liked_albums %}
+    <div>{{ album.name }}</div>
+{% endfor %}
+<h3>Playlists</h3>
+{% for playlist in liked_playlists %}
+    <div>{{ playlist.name }}</div>
+{% endfor %}

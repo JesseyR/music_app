@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">{{ title }}</h1>
+
+    {% if recommendations %}
+        <div class="row">
+            {% for song in recommendations %}
+                <div class="col-12 col-md-6 col-lg-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if song.album.cover_image %}
+                            <img src="{{ song.album.cover_image.url }}" 
+                                 alt="{{ song.title }} album cover" 
+                                 class="card-img-top img-fluid" 
+                                 style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted">No Album Art</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-truncate">{{ song.title }}</h5>
+                            <p class="card-text text-muted text-truncate">{{ song.artist.name }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <small class="text-muted">{{ song.plays }} plays</small>
+                                
+                                <div class="btn-group">
+                                    <button 
+                                        data-song-id="{{ song.id }}" 
+                                        class="btn btn-sm btn-primary play-song-btn"
+                                    >
+                                        Play
+                                    </button>
+                                    <button 
+                                        data-song-id="{{ song.id }}" 
+                                        class="btn btn-sm btn-success add-to-playlist-btn"
+                                    >
+                                        + Playlist
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No Recommendations Yet</h4>
+            <p>Start exploring and listening to songs to get personalized recommendations!</p>
+            <hr>
+            <a href="{% url 'home' %}" class="btn btn-primary">Explore Music</a>
+        </div>
+    {% endif %}
+
+    {% if recommendations %}
+        <div class="text-center mt-4">
+            <p class="text-muted">
+                These recommendations are based on your recent listening history.
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Play Song Functionality
+    const playSongButtons = document.querySelectorAll('.play-song-btn');
+    playSongButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const songId = this.getAttribute('data-song-id');
+            window.location.href = '{% url "play_song" 0 %}'.replace('0', songId);
+        });
+    });
+
+    // Add to Playlist Functionality
+    const addToPlaylistButtons = document.querySelectorAll('.add-to-playlist-btn');
+    addToPlaylistButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const songId = this.getAttribute('data-song-id');
+            // You'll need to implement this URL or modal for adding to playlist
+            alert('Add to playlist functionality to be implemented');
+        });
+    });
+});
+</script>
+{% endblock %}

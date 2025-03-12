@@ -1,0 +1,9 @@
+<h2>{{ album.name }}</h2>
+<img src="{{ album.cover_image.url }}" alt="{{ album.name }}">
+<h3>Songs</h3>
+{% for song in album.songs.all %}
+    <div>
+        <h4>{{ song.title }}</h4>
+        <img src="{{ song.cover_image.url }}" alt="{{ song.title }}">
+    </div>
+{% endfor %}
