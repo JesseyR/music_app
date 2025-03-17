@@ -29,14 +29,15 @@ def upload_song(request):
 
 def play_song(request, song_id):
     song = get_object_or_404(Song, id=song_id)
-    
+    print("1")
     # Only create play history for authenticated users
     if request.user.is_authenticated:
         PlayHistory.objects.create(user=request.user, song=song)
-    
+        print("not working")
     # Increment play count
     song.plays += 1
     song.save()
+    print("3")
     
     return render(request, 'player.html', {'song': song})
 

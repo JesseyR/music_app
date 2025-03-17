@@ -1,4 +1,4 @@
-music-platform.css
+/* music-platform.css */
 :root {
     --primary-color: #1DB954;
     --dark-bg: #121212;
@@ -407,3 +407,4 @@ music-platform.css
       justify-content: center;
   }
 }
+

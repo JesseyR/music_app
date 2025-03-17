@@ -11,16 +11,16 @@
     <h1 class="text-center mb-4">{{ genre.name }}</h1>
 
     <!-- Albums Section -->
-    <div class="card mb-4">
+    <div class="card bg-dark mb-4">
         <div class="card-header">
             <h2 class="mb-0">Albums</h2>
         </div>
-        <div class="card-body">
+        <div class="card-body bg-dark">
             {% if albums %}
                 <div class="row">
                     {% for album in albums %}
                         <div class="col-md-4 mb-4">
-                            <div class="card">
+                            <div class="card bg-dark">
                                 <!-- Album Cover -->
                                 <img src="{{ album.cover_image.url }}" class="card-img-top" alt="{{ album.title }} Cover" style="height: 200px; object-fit: cover;">
                                 <div class="card-body">
@@ -41,15 +41,15 @@
     </div>
 
     <!-- Songs Section -->
-    <div class="card mb-4">
+    <div class="card  bg-dark mb-4">
         <div class="card-header">
             <h2 class="mb-0">Songs</h2>
         </div>
         <div class="card-body">
             {% if songs %}
-                <ul class="list-group">
+                <ul class="list-group ">
                     {% for song in songs %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-dark">
                             <!-- Song Title and Details -->
                             <div>
                                 <strong>{{ song.title }}</strong> (from <em>{{ song.album.title }}</em>)
@@ -68,21 +68,4 @@
             {% endif %}
         </div>
     </div>
-
-    <!-- Audio Player -->
-    <div class="fixed-bottom bg-light p-3 text-center">
-        <audio id="audioPlayer" controls class="w-100">
-            Your browser does not support the audio element.
-        </audio>
-    </div>
-</div>
-
-<script>
-    // Function to play a song
-    function playSong(audioUrl) {
-        const audioPlayer = document.getElementById('audioPlayer');
-        audioPlayer.src = audioUrl;
-        audioPlayer.play();
-    }
-</script>
 {% endblock %}

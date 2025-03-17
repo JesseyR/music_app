@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <div class="row mb-4">
         <div class="col">
-            <h1 class="display-4 text-primary">Songs Library</h1>
+            <h1 class="display-4 ">Songs Library</h1>
             <p class="lead text-muted">Explore our collection of amazing tracks</p>
         </div>
         <div class="col-md-4">
@@ -26,7 +26,7 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for song in songs %}
             <div class="col mb-4">
-                <div class="card h-100 song-card shadow-sm">
+                <div class="card bg-dark h-100 song-card shadow-sm">
                     {% if song.album.cover_image %}
                         <img src="{{ song.album.cover_image.url }}" class="card-img-top album-cover" alt="{{ song.album.name }} cover">
                     {% else %}
@@ -34,7 +34,7 @@
                             <i class="fas fa-music fa-3x text-muted"></i>
                         </div>
                     {% endif %}
-                    <div class="card-body">
+                    <div class="card-body ">
                         <h5 class="card-title">
                             <a href="{% url 'song_detail' song.id %}" class="text-decoration-none">
                                 {{ song.title }}
@@ -51,7 +51,7 @@
                     <div class="card-footer bg-transparent d-flex justify-content-between">
                         <button class="btn btn-sm btn-outline-secondary play-song-btn" 
                             data-song-id="{{ song.id }}"
-                            data-song-url="{{ song.file.url }}"
+                            data-song-url="{{ song.audio_file.url }}"
                             data-song-title="{{ song.title }}"
                             data-song-artist="{{ song.artist }}"
                             data-song-cover="{{ song.album.cover_image.url }}">
@@ -59,7 +59,7 @@
                         </button>
                         <button class="btn btn-sm btn-outline-primary add-to-playlist-btn"
                             data-song-id="{{ song.id }}"
-                            data-song-url="{{ song.file.url }}"
+                            data-song-url="{{ song.audio_file.url }}"
                             data-song-title="{{ song.title }}"
                             data-song-artist="{{ song.artist }}"
                             data-song-cover="{{ song.album.cover_image.url }}">

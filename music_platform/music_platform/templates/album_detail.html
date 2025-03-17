@@ -7,13 +7,13 @@
     <!-- Album Header -->
     <div class="row">
         <div class="col-md-4">
-            <img src="{{ album.cover_image.url }}" alt="{{ album.name }}" class="img-fluid rounded shadow">
+            <img src="{{ album.cover_image.url }}" alt="{{ album.title }}" class="img-fluid rounded shadow">
         </div>
         <div class="col-md-8">
-            <h1 class="display-4">{{ album.name }}</h1>
-            <p class="lead">By {{ album.artist.name }}</p>
+            <h1 class="display-4">{{ album.title }}</h1>
+            <p class="lead">By {{ album.artist }}</p>
             <p>{{ album.release_date|date:"F j, Y" }}</p>
-            <p>{{ album.description }}</p>
+            <p>{{ album.genre }}</p>
             <button class="btn btn-primary btn-lg">Play Album</button>
             <button class="btn btn-outline-secondary btn-lg">Add to Favorites</button>
         </div>

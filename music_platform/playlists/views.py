@@ -69,6 +69,7 @@ def share_playlist(request, playlist_id):
     return JsonResponse({'status': 'success'})
 
 @csrf_exempt
+@require_POST
 @login_required
 def add_to_playlist(request):
     if request.method == 'POST':

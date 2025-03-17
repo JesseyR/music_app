@@ -3,7 +3,7 @@
 {% block title %}Choose a Genre{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container  mt-5">
     <h1 class="text-center mb-4">Choose a Genre</h1>
     
     <!-- Search Bar -->
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Genre List -->
-    <ul class="list-group">
+    <ul class="list-group bg-dark">
         {% for genre in genre %}
             <li class="list-group-item">
                 <a href="{% url 'genre_detail' genre.slug %}" class="text-decoration-none text-dark">
